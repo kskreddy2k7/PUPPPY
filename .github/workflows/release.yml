@@ -1,0 +1,99 @@
+name: Release Cute Puppy
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-windows-release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - run: python -m unittest discover -s tests -p "test_*.py"
+      - run: call scripts/build_windows.bat
+      - run: powershell Compress-Archive -Path dist/CutePuppy.exe -DestinationPath dist/CutePuppy-Windows.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-release-build
+          path: |
+            dist/CutePuppy.exe
+            dist/CutePuppy-Windows.zip
+
+  build-macos-release:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - run: |
+          python3 -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install create-dmg
+      - run: python3 -m unittest discover -s tests -p "test_*.py"
+      - run: |
+          chmod +x scripts/build_macos.sh
+          ./scripts/build_macos.sh
+      - run: |
+          cd dist
+          zip -r CutePuppy-macOS.zip CutePuppy.app
+          create-dmg \
+            --volname "Cute Puppy" \
+            --app-drop-link 400 180 \
+            CutePuppy.dmg \
+            CutePuppy.app || zip -r CutePuppy-DMG-Fallback.zip CutePuppy.app
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-release-build
+          path: |
+            dist/CutePuppy-macOS.zip
+            dist/CutePuppy.dmg
+
+  publish-release:
+    needs: [build-windows-release, build-macos-release]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows-release-build
+          path: release-artifacts/windows
+      - uses: actions/download-artifact@v4
+        with:
+          name: macos-release-build
+          path: release-artifacts/macos
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Cute Puppy ${{ github.ref_name }}
+          body: |
+            🐶 **Cute Puppy Desktop Application ${{ github.ref_name }} Release**
+
+            ### Features:
+            - 🐶 Living quadruped desktop puppy
+            - 🎾 Interactive ball fetch & physics
+            - 🏠 Movable dog house
+            - 🍖 Food & 💧 Water feeding routines
+            - 😴 Sleep & morning wake routines
+            - ❤️ Dynamic Mood & Expressions system
+            - 🖱️ Natural cursor tracking & prediction
+            - 🔊 Cute puppy vocalizations
+            - ⚡ High-performance 60 FPS cached engine
+
+            ### Installation Downloads:
+            - **Windows**: `CutePuppy.exe` or `CutePuppy-Windows.zip`
+            - **macOS**: `CutePuppy.dmg` or `CutePuppy-macOS.zip`
+          files: |
+            release-artifacts/windows/*
+            release-artifacts/macos/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,64 @@
+name: Build macOS Application
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install create-dmg
+
+      - name: Run Automated Tests
+        run: |
+          python3 -m unittest discover -s tests -p "test_*.py"
+
+      - name: Build Application Bundle
+        run: |
+          chmod +x scripts/build_macos.sh
+          ./scripts/build_macos.sh
+
+      - name: Verify macOS App Bundle Structure
+        run: |
+          test -d "dist/CutePuppy.app" || (echo "dist/CutePuppy.app missing" && exit 1)
+          test -f "dist/CutePuppy.app/Contents/Info.plist" || (echo "Info.plist missing" && exit 1)
+          test -f "dist/CutePuppy.app/Contents/MacOS/CutePuppy" || (echo "Executable missing" && exit 1)
+
+      - name: Package macOS ZIP & DMG
+        run: |
+          cd dist
+          zip -r CutePuppy-macOS.zip CutePuppy.app
+          create-dmg \
+            --volname "Cute Puppy" \
+            --window-pos 200 120 \
+            --window-size 600 400 \
+            --icon-size 100 \
+            --app-drop-link 400 180 \
+            CutePuppy.dmg \
+            CutePuppy.app || zip -r CutePuppy-DMG-Fallback.zip CutePuppy.app
+
+      - name: Upload macOS Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: CutePuppy-macOS
+          path: |
+            dist/CutePuppy-macOS.zip
+            dist/CutePuppy.dmg

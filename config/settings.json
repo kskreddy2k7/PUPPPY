@@ -1,0 +1,32 @@
+{
+    "puppy_name": "lucky",
+    "speed": "Fast",
+    "puppy_size": "Large",
+    "coat_style": "Brown & Cream",
+    "collar_color": "Blue",
+    "active_toy": "Ball",
+    "follow_cursor": true,
+    "random_wandering": true,
+    "auto_sleep": true,
+    "random_speech": true,
+    "smart_idle_sleep": true,
+    "sound_enabled": false,
+    "sound_volume": 50,
+    "start_with_windows": false,
+    "hunger": 74.42419581413272,
+    "thirst": 67.22562751770019,
+    "energy": 100,
+    "happiness": 20.564850890636432,
+    "affection": 100,
+    "home_x": -9,
+    "home_y": 773,
+    "home_theme": "Cozy Wood",
+    "unlocked_achievements": [
+        "first_day",
+        "best_friends",
+        "home_sweet_home",
+        "pro_napper",
+        "ball_champ",
+        "good_boy"
+    ]
+}
