@@ -18,7 +18,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - run: python -m unittest discover -s tests -p "test_*.py"
-      - run: call scripts/build_windows.bat
+      - name: Build Windows Executable
+        shell: cmd
+        run: |
+          call scripts\build_windows.bat
       - run: powershell Compress-Archive -Path dist/CutePuppy.exe -DestinationPath dist/CutePuppy-Windows.zip
       - uses: actions/upload-artifact@v4
         with:

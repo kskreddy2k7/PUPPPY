@@ -31,10 +31,12 @@ jobs:
           python -m unittest discover -s tests -p "test_*.py"
 
       - name: Build Executable
+        shell: cmd
         run: |
-          call scripts/build_windows.bat
+          call scripts\build_windows.bat
 
       - name: Verify Executable Exists
+        shell: cmd
         run: |
           if not exist "dist\CutePuppy.exe" (
             echo "ERROR: dist\CutePuppy.exe was not created!"
