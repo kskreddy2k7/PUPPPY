@@ -25,8 +25,11 @@ def main():
     # 1. Single Instance Protection (Prevent Duplicate Puppies)
     shared_memory = QSharedMemory("CutePuppy_SingleInstance_Mutex")
     if not shared_memory.create(1):
-        print("CutePuppy is already running on your desktop!")
-        sys.exit(0)
+        if shared_memory.error() == QSharedMemory.AlreadyExists:
+            shared_memory.attach()
+            shared_memory.detach()
+            if not shared_memory.create(1):
+                pass
 
     # 2. Startup Auto-Registration Verification
     settings = SettingsManager()
