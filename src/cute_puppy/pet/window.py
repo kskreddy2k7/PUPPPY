@@ -135,7 +135,7 @@ class PuppyWindow(QWidget):
                 dist, speed = self.physics.update_physics(is_running=True, speed_factor=speed_factor)
                 self.move(self.physics.pos[0], self.physics.pos[1])
 
-                self.toy.move(self.x() + 20, self.y() + 20)
+                self.toy.move(self.x() + (36 if self.facing_right else 8), self.y() + 24)
 
                 if dist < 30:
                     self.is_carrying_toy = False
@@ -155,6 +155,10 @@ class PuppyWindow(QWidget):
                 dist, speed = self.physics.update_physics(is_running=True, speed_factor=speed_factor)
                 self.move(self.physics.pos[0], self.physics.pos[1])
 
+                dx_target = toy_c.x() - self.x()
+                if abs(dx_target) > 12:
+                    self.facing_right = (dx_target > 0)
+
                 if dist < 25:
                     self.is_carrying_toy = True
                     self.sound.play_toy()
@@ -163,10 +167,10 @@ class PuppyWindow(QWidget):
                 return
 
         elif self.settings.get("follow_cursor", True) and state not in (PuppyState.PETTED, PuppyState.PLAY, PuppyState.SNIFF, PuppyState.STRETCH, PuppyState.YAWN, PuppyState.EAT, PuppyState.DRINK):
-            pred_x = cursor_pos.x() + cursor_dx * 0.5
-            pred_y = cursor_pos.y() + cursor_dy * 0.5
-            target_x = pred_x - (self.width() // 2) + 20
-            target_y = pred_y - (self.height() // 2) + 20
+            pred_x = cursor_pos.x() + cursor_dx * 0.3
+            pred_y = cursor_pos.y() + cursor_dy * 0.3
+            target_x = pred_x - (self.width() // 2)
+            target_y = pred_y - (self.height() // 2)
             self.physics.set_target(target_x, target_y)
 
             is_fast = dist_moved > 15
@@ -174,7 +178,7 @@ class PuppyWindow(QWidget):
             self.move(self.physics.pos[0], self.physics.pos[1])
 
             dx_target = target_x - self.x()
-            if abs(dx_target) > 5:
+            if abs(dx_target) > 18:
                 self.facing_right = (dx_target > 0)
 
             speed_cat = self.physics.get_speed_category(speed, dist_moved)

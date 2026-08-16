@@ -237,6 +237,24 @@ class HouseWindow(QWidget):
             painter.drawText(QRect(0, 0, self.width(), 20), Qt.AlignCenter, "✋ DRAGGABLE")
 
         if self.is_sleeping_inside:
+            # Draw cute sleeping puppy face inside the house doorway
+            painter.setBrush(QColor(230, 175, 115)) # Puppy fur color
+            painter.setPen(QPen(QColor(160, 100, 50), 2))
+            painter.drawEllipse(QRect(42, 72, 34, 30)) # Puppy head inside doorway
+            
+            # Draw sleeping eyes (closed curves)
+            painter.setPen(QPen(QColor(70, 40, 20), 2, Qt.SolidLine, Qt.RoundCap))
+            painter.drawArc(QRect(48, 80, 8, 6), 0 * 16, 180 * 16) # Left closed eye
+            painter.drawArc(QRect(62, 80, 8, 6), 0 * 16, 180 * 16) # Right closed eye
+            
+            # Cute nose and blush
+            painter.setBrush(QColor(50, 30, 20))
+            painter.setPen(Qt.NoPen)
+            painter.drawEllipse(QRect(55, 87, 8, 5)) # Nose
+            painter.setBrush(QColor(255, 140, 160, 160))
+            painter.drawEllipse(QRect(46, 86, 6, 4)) # Left cheek blush
+            painter.drawEllipse(QRect(66, 86, 6, 4)) # Right cheek blush
+
             painter.setFont(QFont("Segoe UI", 12, QFont.Bold))
             painter.setPen(QColor(100, 140, 240))
             zzz_str = "Z" * ((self.zzz_frame % 3) + 1)

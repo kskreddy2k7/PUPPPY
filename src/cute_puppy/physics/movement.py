@@ -12,9 +12,9 @@ class MovementPhysics:
         self.target_y = float(y)
         
         self.ground_y = float(y)
-        self.friction = 0.78
-        self.accel = 0.85
-        self.max_speed = 12.0
+        self.friction = 0.85
+        self.accel = 0.60
+        self.max_speed = 10.0
 
         self.current_speed_category = "IDLE"
 
@@ -27,11 +27,11 @@ class MovementPhysics:
         dy = self.target_y - self.y
         dist = math.hypot(dx, dy)
 
-        if dist > 3.0:
+        if dist > 8.0:
             nx = dx / dist
             ny = dy / dist
 
-            target_max_speed = (10.0 if is_running else 4.5) * speed_factor
+            target_max_speed = (8.5 if is_running else 3.8) * speed_factor
             self.ax = nx * self.accel * speed_factor
             self.ay = ny * self.accel * speed_factor
 
@@ -44,8 +44,8 @@ class MovementPhysics:
                 self.vx *= factor
                 self.vy *= factor
         else:
-            self.vx *= 0.5
-            self.vy *= 0.5
+            self.vx *= 0.3
+            self.vy *= 0.3
             self.ax = 0.0
             self.ay = 0.0
 
