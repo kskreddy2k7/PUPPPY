@@ -41,7 +41,7 @@ jobs:
       - run: |
           python3 -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install create-dmg
+          brew install create-dmg || true
       - run: python3 -m unittest discover -s tests -p "test_*.py"
       - run: |
           chmod +x scripts/build_macos.sh
