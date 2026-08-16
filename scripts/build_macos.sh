@@ -3,7 +3,7 @@ set -e
 
 echo "Building CutePuppy macOS App Bundle..."
 
-python3 -c "from cute_puppy.animation import generate_all_assets; generate_all_assets()"
+PYTHONPATH=src python3 -c "from cute_puppy.animation import generate_all_assets; generate_all_assets()"
 
 pyinstaller --noconfirm CutePuppy.spec
 
